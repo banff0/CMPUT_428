@@ -79,6 +79,7 @@ while True:
                     dir = (dir * scale).astype(np.int32)
                     if VERBOSE: print(dir)
                     draw_arrow(cframe, [X[i-1], X[i]], [Y[j-1], Y[j]], dir)
+    # do the thresholding
     else:
         cframe = ((diff > thresh * 2) | (diff < -thresh * 2)) * 255
         cframe = cv2.cvtColor(cframe.astype(np.uint8), cv2.COLOR_GRAY2BGR)
