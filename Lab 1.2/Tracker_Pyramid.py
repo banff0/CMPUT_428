@@ -189,7 +189,7 @@ while True:
     cframe = cv2.rectangle(cframe, [int(bbox[0]), int(bbox[1])], [int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3])], [0, 0, 255], 2)
 
     cv2.imshow("test", cframe.astype(np.uint8))
-    sleep(0.1)
+    # sleep(0.1)
     
     k = cv2.waitKey(1)
     if k%256 == 27:
