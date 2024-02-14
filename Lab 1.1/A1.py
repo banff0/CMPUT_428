@@ -18,6 +18,7 @@ scale = 2
 vid_length = 7 # seconds
 
 
+
 def draw_arrow(img, block_x, block_y, vec):
     center_x = int(block_x[1] - blockSize / 2)
     center_y = int(block_y[1] - blockSize / 2)
