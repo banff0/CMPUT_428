@@ -2,7 +2,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
 from math import cos, sin
-from math import degrees as d
+from math import radians as d
 
 
 def mk_line(xflag, yflag, zflag):
