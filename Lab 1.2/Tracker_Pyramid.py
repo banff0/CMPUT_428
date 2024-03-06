@@ -175,7 +175,7 @@ while True:
     frame = cv2.medianBlur(frame,5)
 
     try:
-        bbox = pyr_track(frame, template, bbox, depth=3, resize_factor=2)
+        bbox = pyr_track(frame, template, bbox, depth=2, resize_factor=2)
         # if frame_num > 5:
         #     template = get_region(frame, bbox)
         # break
@@ -185,8 +185,9 @@ while True:
         # raise e
         # print("ERROR:", e)
         pass
-
-    cframe = cv2.rectangle(cframe, [int(bbox[0]), int(bbox[1])], [int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3])], [0, 0, 255], 2)
+    
+    # print([int(bbox[0]), int(bbox[1])], [int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3])])
+    cframe = cv2.rectangle(cframe, (int(bbox[0]), int(bbox[1])), (int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3])), [0, 0, 255], 2)
 
     cv2.imshow("test", cframe.astype(np.uint8))
     # sleep(0.1)
