@@ -16,7 +16,10 @@ def get_pts(line, seen_pts, pts):
     if not p1 in seen_pts:
         seen_pts.add(p1)
         for i in range(3):
-            pts[i].append(line[:3, :, 0][i])
+            if i == 4:
+                pts[i].append(line[:3, :, 1][i+1])
+            else:
+                pts[i].append(line[:3, :, 0][i])
     p2 = tuple(map(tuple, (line[:3, :, 99])))
     if not p2 in seen_pts:
         seen_pts.add(p2)
@@ -27,9 +30,7 @@ def get_pts(line, seen_pts, pts):
 
 def draw_cube(H, trans=True):
     pts = [0, 0, 0]
-    fig = plt.figure(figsize=plt.figaspect(0.5))
-    # Cube
-    ax = fig.add_subplot(projection='3d')
+
     cube = []
     cube.append(mk_line(2, 1, 1))
     cube.append(mk_line(2, 0, 1))
@@ -54,24 +55,8 @@ def draw_cube(H, trans=True):
                 cube[j][:3, :, i] = np.matmul(H, cube[j][:, :, i])
                 cube[j][:3, :, i] = cube[j][:3, :, i] / cube[j][2, :, i]
             get_pts(cube[j], seen, pts)
-            # vertex.add(tuple(map(tuple, (cube[j][:3, :, 0]))))
-            # vertex.add(tuple(map(tuple, (cube[j][:3, :, 99]))))
-            # print(cube[j][:3, :, 0])
-            # print(cube[j][:3, :, 99])
-        # pts = [[cube[j][:3, :, 99][0], cube[j][:3, :, 0][0]], [cube[j][:3, :, 99][1], cube[j][:3, :, 0][1]], [cube[j][:3, :, 99][2], cube[j][:3, :, 0][2]]]
         
         print("PONTS", pts)
-        # print(vertex, len(vertex))
-        # print(np.array(vertex[0]))
-        ax = fig.add_subplot()
-        # ax.set_xlim([-3.5, 2.5])
-        # ax.set_ylim([-3.5, 2.5])
-        for line in cube:
-            ax.scatter(line[0], line[1], cmap='Greens')
-    else:
-        for line in cube:
-            ax.scatter3D(line[0], line[1], line[2], cmap='Blues')
-    plt.show()
 
     return pts
 
@@ -81,35 +66,62 @@ f = 2715 # from Q2_a
 dist = 1800 #cm
 b = 15 #cm
 
+D = np.zeros([9, 8])
+X = np.zeros([9, 8])
+Y = np.zeros([9, 8])
+
 for j in range(10):
-    H = np.array([[cos(d(46 + j)), 0, sin(d(46 + j)), (b +5)*j],
+    H = np.array([[cos(d(46+j)), 0, sin(d(46+j)), b*j],
                   [0, 1, 0, 0], 
                   [0, 0, 0, f/dist]])
  
     if j > 0:
-        xr, yr = xl, yl
+      xr, yr= xl, yl
 
     xl, yl, _ = draw_cube(H)
-    print(xl, yl, "###################")
 
     x = []
     y = []
     z = []
 
+    
+
     if j > 0:
         for i in range(len(xr)):
-            print(xl[i] ,xr[i], (xl[i] - xr[i]), "------------------")
-            z.append((f*b) / (xl[i] - xr[i]))
-            x.append(xl[i] * (z[i] / f))
-            y.append(yl[i] * (z[i] / f))
+            X[j-1, i] = xl[i]
+            Y[j-1, i] = yl[i]
+            D[j-1, i] = (xl[i] - xr[i])[0]
 
-            print([x[i], y[i], z[i]])
+# print(X.shape, X)
+df = np.ones([9, 1]) * f*b
+print(df, df.shape)
+print(D, D.shape)
 
-        # z = (f*b) / (xl - xr)
+z = np.linalg.lstsq(D, df, rcond=None)[0]
 
-        fig = plt.figure(figsize=plt.figaspect(0.5))
-        ax = fig.add_subplot(projection='3d')
+for i in range(9):
+    for j in range(8):
+        X[i, j] *= z[j]
+        Y[i, j] *= z[j]
+x_3D = np.linalg.lstsq(X, f*np.ones([9, 1]), rcond=None)[0]
+y_3D = np.linalg.lstsq(Y, f*np.ones([9, 1]), rcond=None)[0]
 
-        ax.scatter3D(x, y, z)
+fig = plt.figure(figsize=plt.figaspect(0.5))
+ax = fig.add_subplot(projection='3d')
 
-        plt.show()
+ax.scatter3D(x_3D, y_3D, z)
+
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+
+
+
+plt.show()
+
+'''
+To do the last part you would save the corners of the tracker every n (eg. 10) frames
+these points would then become the u, v that you use to detect the depth. From these coordinates you could
+use the difference in x between frames to calculate the disparity and then follow the above algorithm to solve 
+for X, Y, and Z
+'''

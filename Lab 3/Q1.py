@@ -1,5 +1,5 @@
 import numpy as np
-from get_data import get_imgs
+from get_data import get_mat_data, get_vid_data
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -41,7 +41,9 @@ def SfM(imgs):
 
     plt.show()
 
-SfM(get_imgs("affrec3"))
-# SfM(get_imgs("HouseTallBasler64"))
+# SfM(get_mat_data("affrec3"))
+# SfM(get_mat_data("affrec3"))
+# SfM(get_mat_data("HouseTallBasler64"))
+get_vid_data("test.mp4", 6)
 
 
