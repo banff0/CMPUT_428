@@ -44,6 +44,6 @@ def SfM(imgs):
 # SfM(get_mat_data("affrec3"))
 # SfM(get_mat_data("affrec3"))
 # SfM(get_mat_data("HouseTallBasler64"))
-get_vid_data("test.mp4", 6)
+SfM(get_vid_data("car_test.mp4", 6))
 
 

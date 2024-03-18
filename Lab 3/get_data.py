@@ -3,6 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 from scipy.io import loadmat
 import LKTracker
+import time
 
 def _get_bbox(pt):
     size = 15
@@ -61,6 +62,8 @@ def get_vid_data(file, num_pts):
         trackers.append(LKTracker.Tracker(frame, _get_bbox(pts[i])))
     
     h, w, _ = frame.shape
+    t_lower = 50  # Lower Threshold 
+    t_upper = 150  # Upper threshold 
 
     while True:
         ret, frame = cam.read()
@@ -71,6 +74,9 @@ def get_vid_data(file, num_pts):
         if not ret:
             print("failed to grab frame")
             break
+
+        # Applying the Canny Edge filter
+        # frame = cv2.Canny(frame, t_lower, t_upper)
         frame = cv2.medianBlur(frame,5)
         corners = np.zeros([2, num_pts])
         for i in range(num_pts):

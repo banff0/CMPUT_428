@@ -16,6 +16,7 @@ class Tracker():
         # a valid value is returned for the code to run without errors
         # this is only for demonstration purpose and your code must NOT use actual corners in any way
         frame_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # frame_img = img
         # parameters for lucas kanade optical flow
         lk_params = dict( winSize  = (32,32),
                     maxLevel = 8,
