@@ -42,7 +42,7 @@ def get_mat_data(file):
 
     return imgs
 
-def get_vid_data(file, num_pts):
+def get_vid_data(file, num_pts, show=False):
     cam = cv2.VideoCapture(file)
 
     ret, frame = cam.read()
@@ -55,6 +55,7 @@ def get_vid_data(file, num_pts):
     plt.title("Image") 
     
     pts = plt.ginput(num_pts)
+    plt.close()
 
     trackers = []
     for i in range(num_pts):
@@ -62,11 +63,15 @@ def get_vid_data(file, num_pts):
     
     h, w, _ = frame.shape
 
+    X = []
+    Y = []
+    f_num = 0
     while True:
         ret, frame = cam.read()
         try:
             cframe = frame.copy()
         except AttributeError:
+            cv2.destroyAllWindows()
             break
         if not ret:
             print("failed to grab frame")
@@ -77,19 +82,39 @@ def get_vid_data(file, num_pts):
             tracker = trackers[i]
             c = tracker.updateTracker(frame)
             corners[:, i] = _get_center(c)
+        #     print(_get_center(c))
+        # print(corners)
+        X.append(corners[0])
+        Y.append(corners[1])
+        # raise Exception
         pts = np.concatenate((corners.T, np.ones([num_pts, 1])), axis=1) 
+        
+        if show:
+            for i in range(num_pts):
+                cframe = cv2.circle(cframe, (int(pts[i][0]), int(pts[i][1])), 10, [255, 255, 0], -1)
+            cframe = cv2.resize(cframe, (1080, 1080))
 
-        for i in range(num_pts):
-            cframe = cv2.circle(cframe, (int(pts[i][0]), int(pts[i][1])), 10, [255, 255, 0], -1)
-        cframe = cv2.resize(cframe, (1080, 1080))
+            cv2.imshow("test", cframe.astype(np.uint8))
 
-        cv2.imshow("test", cframe.astype(np.uint8))
+            k = cv2.waitKey(1)
+            if k%256 == 27:
+                # ASCII:ESC pressed
+                print("Escape hit, closing...")
+                cv2.destroyAllWindows()
+                break
+        f_num += 1
 
-        k = cv2.waitKey(1)
-        if k%256 == 27:
-            # ASCII:ESC pressed
-            print("Escape hit, closing...")
-            break
+    x = np.array(X)
+    y = np.array(Y)
+    print(f_num)
+    print(x.shape)
+
+    imgs = np.zeros([x.shape[0], x.shape[1], 2])
+    for i in range(len(x)):
+        for j in range(x.shape[1]):
+            imgs[i, j] = [x[i, j], y[i, j]]
+    print(imgs.shape)
+    return imgs
 
         
         
