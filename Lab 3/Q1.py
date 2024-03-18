@@ -9,7 +9,7 @@ def center_data(pts):
 
 def construct_W(imgs):
     # imgs = [m, n, 2]
-    print("imgs shape", imgs.shape)
+    # print("imgs shape", imgs.shape)
     # number of frames
     m = imgs.shape[0]
     # number of points
@@ -26,7 +26,7 @@ def construct_W(imgs):
 
 def SfM(imgs):
     W = construct_W(imgs)
-    print("W", W.shape)
+    # print("W", W.shape)
     U, S, Vt = np.linalg.svd(W, full_matrices=True)
     Vt = Vt[:3, :]
     X = Vt.T
@@ -41,9 +41,10 @@ def SfM(imgs):
 
     plt.show()
 
-# SfM(get_mat_data("affrec3"))
+# SfM(get_mat_data("affrec1"))
 # SfM(get_mat_data("affrec3"))
 # SfM(get_mat_data("HouseTallBasler64"))
-SfM(get_vid_data("car_test.mp4", 6))
+SfM(get_vid_data("car_test.mp4", 6, show=True))
+# SfM(get_vid_data("test_box.mp4", 8, show=True))
 
 
